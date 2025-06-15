@@ -8,40 +8,37 @@ public class IntroScript : MonoBehaviour
     public Image image;
     public Sprite[] intros;
     int current;
-    public AudioSource sfx;
-    public AudioClip btnclick;
     public Button nextBtn;
     public Button OK;
-    
-   
-    public void play(string name)
-    {
-        if (name != null && btnclick != null)
-        {
-            sfx.PlayOneShot(btnclick);
-        }
+    public AudioSource audio;
+    public AudioClip clip;
 
-    }
-    void Update()
+    void play()
     {
-        if (current == intros.Length - 1)
+        audio = GetComponent<AudioSource>();
+        if (audio != null)
         {
-            OK.gameObject.SetActive(true);
+            audio.PlayOneShot(clip);
         }
-
     }
+
     public void OnOk()
     {
-        play("btn");
+        play();
         SceneManager.LoadScene("MainScene");
 
     }
     public void NextPage()
     {
-        play("btn");
+        play();
         current++;
         if (current == intros.Length - 1)
             nextBtn.gameObject.SetActive(false);
         image.sprite = intros[current];
+
+        if (current == intros.Length - 1)
+        {
+            OK.gameObject.SetActive(true);
+        }
     }
 }

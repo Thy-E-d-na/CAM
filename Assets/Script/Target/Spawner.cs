@@ -20,7 +20,9 @@ public class Spawner : MonoBehaviour
     {
         Edge = transform.GetComponent<GameArea>();
         playerLv = FindAnyObjectByType<PlayerScript>();
-
+        int load = PlayerPrefs.GetInt("loadspawn");
+        PlayerPrefs.DeleteKey("loadspawn");
+        spawn_onExit(load);
         StartCoroutine(Spawn());
     }
 

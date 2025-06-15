@@ -6,33 +6,14 @@ public class LibController : MonoBehaviour
     public GameObject libPnl;
     public Button libBtn;
     public Button X;
+    public GameObject ComicEndPnl;
 
-    [Header("Details Page")]
-    public LevelInfo[] details;
-    public GameObject infoPnl;
-    public Image idleChar;
-    public Image textImg;
-    public void ShowInfo(int lvIndex)
-    {
-        if (lvIndex >= 0 && lvIndex < details.Length)
-        {
-            idleChar.sprite = details[lvIndex].idle;
-            //textImg.sprite = details[lvIndex].descript;
-            infoPnl.SetActive(true);
-        }
-    }
-    public void back()
-    {
-        infoPnl.SetActive(false);
-    }
-    void Start()
+
+        void Start()
     {
         libPnl.SetActive(false);
     }
-    void Update()
-    {
 
-    }
     public void openLib()
     {
         SoundEffectManager.Play("btn");
@@ -43,12 +24,28 @@ public class LibController : MonoBehaviour
         SoundEffectManager.Play("btn");
         libPnl.SetActive(false);
     }
-
+    public void ChooseEndingA()
+    {
+        if (PlayerPrefs.GetInt("ending1")==1)
+        {
+            ComicEndPnl.SetActive(true);
+        }
+         else
+        {
+            SoundEffectManager.Play("error");
+        }
+    }
+    public void ChooseEndingB()
+    {
+       if (PlayerPrefs.GetInt("ending2")==1)
+        {
+            ComicEndPnl.SetActive(true);
+        }
+         else
+        {
+            SoundEffectManager.Play("error");
+        }
+    }
 }
 
-[System.Serializable]
-public class LevelInfo
-{
-    public Sprite idle;
-    public Image descript;
-}
+

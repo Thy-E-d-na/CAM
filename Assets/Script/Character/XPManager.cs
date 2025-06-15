@@ -9,14 +9,13 @@ public class XPManager : MonoBehaviour
     {
         if(instance != null && instance != this)
         {
-            Destroy(gameObject);
+            Destroy(this);
         }
         else
         {
             instance = this;
         }
     }
-
     public void AddXP(int amount)
     {
         ONXPChange?.Invoke(amount);

@@ -8,7 +8,7 @@ public class ItemScript : MonoBehaviour
     public Button muaBtn;
     public GameController GC;
     public Spawner spawner;
-    public CharacterMove _char;
+    private CharacterMove _char;
     void Start()
     {
         GC = GC.GetComponent<GameController>();

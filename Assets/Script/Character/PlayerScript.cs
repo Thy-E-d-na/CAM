@@ -6,18 +6,19 @@ using UnityEngine.UI;
 
 public class PlayerScript : MonoBehaviour
 {
-    private static PlayerScript instance;
-    public static PlayerScript Instance => instance;
+
+    public static PlayerScript Instance;
 
     [Header("Level Up")]
-    public int _currentXP, _currentLv;
+    public int _currentLv;
+    public int _currentXP;
     public int _maxXP => (int)(40 + 30 * Math.Pow(_currentLv, 2));
 
     //GUI
     [SerializeField] Slider xpBar;
     [SerializeField] TMP_Text _xpText;
     [SerializeField] TMP_Text lvText;
-    
+
 
     public GameObject Endpnl;
     [SerializeField] AudioClip storytell;
@@ -30,41 +31,32 @@ public class PlayerScript : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] AnimatorOverrideController[] animByLv;
 
+    [Header("Ending")]
 
-
-    public void SetUp(Slider bar, TMP_Text xpText, TMP_Text levelText, GameObject endpnl, AnimatorOverrideController[] anims)
-    {
-        xpBar = bar;
-        _xpText = xpText;
-        lvText = levelText;
-        Endpnl = endpnl;
-        animByLv = anims;
-        updateXpUI();
-        if (_currentLv >= 2 && _currentLv - 2 < animByLv.Length)
-        {
-            animator.runtimeAnimatorController = animByLv[_currentLv - 2];
-        }
-    }
+    public GameObject ComicEndPnl;
     void Awake()
     {
-        if (instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(gameObject);
-
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-        updateXpUI();
+        if(Instance == null)
+        Instance = this;
     }
     void Start()
     {
-        //_currentLv = PlayerPrefs.GetInt("playerLv");
-        animator.runtimeAnimatorController = animByLv[_currentLv - 2];
+        _currentLv = PlayerPrefs.GetInt("playerLv");
+        _currentXP = PlayerPrefs.GetInt("xp");
+        animator.runtimeAnimatorController = animByLv[_currentLv - 1];
+
         updateXpUI();
+        if (XPManager.instance != null)
+        {
+            XPManager.instance.ONXPChange += HandleXPChange;
+        }
+        else
+        {
+            Debug.Log("screw up");
+        }
+
     }
+
     void OnEnable()
     {
         XPManager.instance.ONXPChange += HandleXPChange;
@@ -73,9 +65,9 @@ public class PlayerScript : MonoBehaviour
     {
         XPManager.instance.ONXPChange -= HandleXPChange;
     }
+
     private void HandleXPChange(int newXP)
     {
-        if (_currentLv >= 8) return;
         _currentXP += newXP;
 
         if (_currentXP >= _maxXP)
@@ -87,14 +79,19 @@ public class PlayerScript : MonoBehaviour
     }
     void updateXpUI()
     {
-        xpBar.maxValue = _maxXP;
-        xpBar.value = _currentXP;
-        _xpText.text = _currentXP + "/" + _maxXP;
-        lvText.text = "Lv." + _currentLv;
+
+        PlayerPrefs.SetInt("xp", _currentXP);
         if (_currentLv >= 8)
         {
-            _currentXP = 0;
-            _currentLv = 1;
+            _xpText.gameObject.SetActive(false);
+        }
+        else
+        {
+            _xpText.gameObject.SetActive(true);
+            xpBar.maxValue = _maxXP;
+            xpBar.value = _currentXP;
+            _xpText.text = _currentXP + "/" + _maxXP;
+            lvText.text = "Lv." + _currentLv;
         }
     }
     private void LvUp()
@@ -107,13 +104,12 @@ public class PlayerScript : MonoBehaviour
             ShowPopUp();
             MusicManager.pauseMusic();
             SoundEffectManager.Play("lvup");
-            animator.runtimeAnimatorController = animByLv[_currentLv - 2];
+            animator.runtimeAnimatorController = animByLv[_currentLv - 1];
         }
         else if (_currentLv == 8)
         {
             MusicManager.pauseMusic();
-            Endpnl.SetActive(true);          
-            MusicManager.pauseMusic();
+            Endpnl.SetActive(true);
             MusicManager.playMusic(true, storytell);
         }
 
@@ -139,12 +135,20 @@ public class PlayerScript : MonoBehaviour
     public void ChooseEndingA()
     {
         SoundEffectManager.Play("btn2");
-        SceneManager.LoadScene("EndingA");
+        PlayerPrefs.SetInt("ends", 1);
+        PlayerPrefs.Save();
+        SceneManager.LoadScene("A");
+        //ComicEndPnl.SetActive(true);
+        Endpnl.SetActive(false);
     }
     public void ChooseEndingB()
     {
         SoundEffectManager.Play("btn2");
-        SceneManager.LoadScene("EndingB");
+        PlayerPrefs.SetInt("ends", 2);
+        PlayerPrefs.Save();
+        SceneManager.LoadScene("B");
+        //ComicEndPnl.SetActive(true);
+        Endpnl.SetActive(false);
     }
 
 }

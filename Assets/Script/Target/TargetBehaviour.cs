@@ -76,7 +76,6 @@ public class TargetBehaviour : MonoBehaviour
         poke = true;
 
         Instantiate(clickPrf, transform.position, Quaternion.identity);
-
         SoundEffectManager.Play("poke");
         CharacterMove player = FindAnyObjectByType<CharacterMove>();
         if (player != null)
@@ -90,8 +89,8 @@ public class TargetBehaviour : MonoBehaviour
     void Zoom()
     {
         transform.localScale = isZoom ? ogScale * zoomFactor : ogScale;
-        isZoom = false;
-
+        //isZoom = false;
+        
     }
     public void dropXu(Vector3 pos)
     {
